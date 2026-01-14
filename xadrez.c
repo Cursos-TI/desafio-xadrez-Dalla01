@@ -1,78 +1,133 @@
 #include <stdio.h>
 
+/* =========================================================
+   FUNÇÕES RECURSIVAS (Torre, Rainha e Bispo)
+   ========================================================= */
+
+/* Torre: 5 casas para a direita (recursivo) */
+void mover_torre_direita_rec(int casas) {
+    if (casas <= 0) return;          // caso base
+    printf("Direita\n");             // imprime 1 passo
+    mover_torre_direita_rec(casas - 1); // recursão
+}
+
+/* Rainha: 8 casas para a esquerda (recursivo) */
+void mover_rainha_esquerda_rec(int casas) {
+    if (casas <= 0) return;          
+    printf("Esquerda\n");
+    mover_rainha_esquerda_rec(casas - 1);
+}
+
+/*
+  Bispo: recursivo + loops aninhados
+  - movimento diagonal "Cima + Direita"
+  - requisito: loop externo = vertical, interno = horizontal
+  Ideia:
+    Para cada "nível" da recursão, fazemos 1 passo vertical (externo)
+    e 1 passo horizontal (interno), imprimindo Cima e Direita em linhas separadas.
+*/
+void mover_bispo_diag_rec_com_loops(int casas) {
+    if (casas <= 0) return; // caso base
+
+    /* Loop externo: vertical (1 passo "Cima") */
+    for (int v = 0; v < 1; v++) {
+        printf("Cima\n");
+
+        /* Loop interno: horizontal (1 passo "Direita") */
+        for (int h = 0; h < 1; h++) {
+            printf("Direita\n");
+        }
+    }
+
+    mover_bispo_diag_rec_com_loops(casas - 1);
+}
+
+/* =========================================================
+   MAIN
+   ========================================================= */
 int main() {
 
-    /* ================================
-       MOVIMENTO DA TORRE (for)
-       ================================ */
-    
-    int casas_torre = 5;
+    /* Valores definidos diretamente no código (requisito) */
+    const int CASAS_TORRE  = 5;
+    const int CASAS_BISPO  = 5;
+    const int CASAS_RAINHA = 8;
 
+    /* ================================
+       TORRE (recursividade)
+       ================================ */
     printf("Movimento da Torre:\n");
-
-    for (int i = 1; i <= casas_torre; i++) {
-        printf("Direita\n");
-    }
-
+    mover_torre_direita_rec(CASAS_TORRE);
     printf("\n");
 
 
     /* ================================
-       MOVIMENTO DO BISPO (while)
+       BISPO (recursividade + loops aninhados)
+       Externo vertical, interno horizontal
        ================================ */
-
-    int casas_bispo = 5;
-    int contador_bispo = 1;
-
     printf("Movimento do Bispo:\n");
-
-    while (contador_bispo <= casas_bispo) {
-        printf("Cima, Direita\n");
-        contador_bispo++;
-    }
-
+    mover_bispo_diag_rec_com_loops(CASAS_BISPO);
     printf("\n");
 
 
     /* ================================
-       MOVIMENTO DA RAINHA (do-while)
+       RAINHA (recursividade)
        ================================ */
-
-    int casas_rainha = 8;
-    int contador_rainha = 1;
-
     printf("Movimento da Rainha:\n");
-
-    do {
-        printf("Esquerda\n");
-        contador_rainha++;
-    } while (contador_rainha <= casas_rainha);
-
+    mover_rainha_esquerda_rec(CASAS_RAINHA);
     printf("\n");
 
 
     /* ================================
-       MOVIMENTO DO CAVALO
-       Loop aninhado (for + while)
-       2 casas para baixo
-       1 casa para a esquerda
+       CAVALO (loops complexos)
+       Agora: 2 para Cima e 1 para Direita (em "L")
+       - loops aninhados
+       - múltiplas variáveis/condições
+       - usando continue e break
        ================================ */
-
-    int casas_baixo = 2;
-    int casas_esquerda = 1;
 
     printf("Movimento do Cavalo:\n");
 
-    /* Primeiro movimento: 2 casas para baixo */
-    for (int i = 1; i <= casas_baixo; i++) {
-        printf("Baixo\n");
-    }
+    const int CIMA = 2;
+    const int DIREITA = 1;
 
-    /* Segundo movimento: 1 casa para a esquerda */
-    int contador_esquerda = 1;
-    while (contador_esquerda <= casas_esquerda) {
-        printf("Esquerda\n");
-        contador_esquerda++;
+    /*
+      Vamos controlar o "L" em duas fases:
+        Fase 1: subir 2 casas
+        Fase 2: ir 1 casa à direita
+      Para deixar "complexo" como pedido:
+        - loop externo controla a fase (0 = vertical, 1 = horizontal)
+        - loop interno controla o passo dentro da fase
+        - usamos break/continue para controlar fluxo
+    */
+    for (int fase = 0; fase < 2; fase++) {
+
+        int passos = (fase == 0) ? CIMA : DIREITA;
+
+        /* Loop interno com múltiplas variáveis/condições */
+        for (int i = 0, feitos = 0; i < 10; i++) {
+            /* i é um "contador de tentativa", feitos é o que realmente executamos */
+
+            if (feitos >= passos) {
+                break; // já fizemos os passos necessários nesta fase
+            }
+
+            /* Exemplo de condição para demonstrar continue:
+               - se i for ímpar, "pula" esta iteração (não executa passo)
+               Isso não muda o resultado final, só deixa o loop mais "controlado".
+            */
+            if (i % 2 == 1) {
+                continue;
+            }
+
+            /* Executa o passo da fase */
+            if (fase == 0) {
+                printf("Cima\n");
+            } else {
+                printf("Direita\n");
+            }
+
+            feitos++; // conta um passo real
+        }
     }
 
     return 0;
